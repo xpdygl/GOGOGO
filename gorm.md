@@ -13,7 +13,11 @@ import (
 )
 ```
 
-快速启动   mysql(无需建立数据库，以下代码会自动生成一张表)
+### 快速启动   
+
+ 本例使用的数据库是mysql
+
+(无需建立数据库，以下代码会自动生成一张表)
 
 ```go
 package main
@@ -77,7 +81,23 @@ func main() {
 }
 ```
 
+### 连接本地数据库
 
+连接自己数据库时需要在代码中编写以下内容
+
+```go
+//         账号	密码                数据库端口		数据库名                                      数据库设置
+	dsn:= "root:root@tcp(localhost:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+//open数据库时会返回两个值，一个是db，一个是err，用来打印错误信息
+	if err != nil {
+		panic(err)
+	}
+
+```
+
+### 默认标签
 
 可以通过标签 default 为字段定义默认值，如：
 
@@ -89,6 +109,49 @@ type User struct {
 }
 ```
 
+插入记录到数据库时，默认值会被用于填充值为零值的字段
 
-插入记录到数据库时，默认值 会被用于 填充值为 零值 的字段
 
+
+### 新增数据
+
+```go
+  db.Create(&Product{Code: "D42", Price: 100})
+```
+
+  
+
+### 更新数据
+
+```go
+// 条件更新
+//指定模型u ，取U的地址值，传进去，设置amount=12334的这一列，让这一列的name为hello
+	db.Model(&u).Where("amount = ?", 12334).Update("name", "hello")
+	fmt.Println(&u)							//打印
+
+// UPDATE users SET name='hello' WHERE amount=12334;
+```
+
+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
+
+
+
+### 删除数据
+
+```go
+删除一条记录
+删除一条记录时，删除对象需要指定主键，否则会触发 批量 Delete，例如：
+
+db.Delete(&u)
+会把数据库中的数据库全部删了
+
+//指定主键的话，就只会删除指定的行数
+db.Delete(&User{}, 10)
+// DELETE FROM users WHERE id = 10;
+```
+
+
+
+如果您的模型包含了一个 `gorm.deletedat` 字段（`gorm.Model` 已经包含了该字段)，它将自动获得软删除的能力！
+
+拥有软删除能力的模型调用 `Delete` 时，记录不会从数据库中被真正删除。但 GORM 会将 `DeletedAt` 置为当前时间， 并且你不能再通过普通的查询方法找到该记录。
