@@ -59,6 +59,6 @@ func (orderHandler OrderHandler) AddNewOrder(c *gin.Context) {
 
 在gin框架中因为有*gin.Context的原因
 
-直接 c.BindJSON（&接收的JSON数据）
+直接 c.BindJSON（&对象）
 
 就可以成功接收，然后进行后续操作。
