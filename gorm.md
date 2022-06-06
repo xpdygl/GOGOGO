@@ -97,6 +97,27 @@ func main() {
 
 ```
 
+## 创建数据库
+
+使用AutoMigrate创建数据库时，需要注意引用的结构体内的字段名大写，数据库读不到小写的字段名
+
+```go
+type Order struct {
+	gorm.Model
+	OrderNo 	string
+	UserName 	string
+	Amount  	int64
+	FileUrl 	string
+	Status  	string
+}
+```
+
+
+
+**不过AutoMigrate魔法值太大，开发中慎用。**
+
+
+
 ### 默认标签
 
 可以通过标签 default 为字段定义默认值，如：
